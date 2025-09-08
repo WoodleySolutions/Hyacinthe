@@ -48,6 +48,7 @@ function App() {
   const [restTimer, setRestTimer] = useState(0)
   const [restActive, setRestActive] = useState(false)
   const [showGuide, setShowGuide] = useState(false)
+  const [showResetModal, setShowResetModal] = useState(false)
 
   // Request screen wake lock when workout starts
   const requestWakeLock = async () => {
@@ -150,6 +151,45 @@ function App() {
       .filter(workout => workout.workoutType === workoutType)
       .sort((a, b) => new Date(b.date) - new Date(a.date))[0]
     return lastWorkout
+  }
+
+  // Week/Day tracking functions
+  const getWorkoutStats = () => {
+    const workoutHistory = JSON.parse(localStorage.getItem('workoutHistory') || '[]')
+    const pushCount = workoutHistory.filter(w => w.workoutType === 'push').length
+    const pullCount = workoutHistory.filter(w => w.workoutType === 'pull').length
+    const legsCount = workoutHistory.filter(w => w.workoutType === 'legs').length
+    
+    const totalWorkouts = workoutHistory.length
+    const currentWeek = Math.floor(totalWorkouts / 3) + 1
+    const workoutsThisWeek = totalWorkouts % 3
+    
+    // Determine next recommended workout
+    const counts = { push: pushCount, pull: pullCount, legs: legsCount }
+    const minCount = Math.min(pushCount, pullCount, legsCount)
+    let nextWorkout = null
+    
+    if (pushCount === minCount) nextWorkout = 'push'
+    else if (pullCount === minCount) nextWorkout = 'pull'
+    else if (legsCount === minCount) nextWorkout = 'legs'
+    
+    return {
+      week: currentWeek,
+      workoutsThisWeek,
+      totalWorkouts,
+      pushCount,
+      pullCount,
+      legsCount,
+      nextWorkout,
+      programDay: totalWorkouts > 0 ? `Day ${totalWorkouts}` : 'Start Program'
+    }
+  }
+
+  const resetProgress = () => {
+    localStorage.removeItem('workoutHistory')
+    setShowResetModal(false)
+    // Force re-render to update stats
+    window.location.reload()
   }
 
   const startWorkout = (workoutType) => {
@@ -313,30 +353,77 @@ function App() {
     </div>
   )
 
+  // Reset Progress Modal
+  const ResetModal = () => (
+    <div className="program-guide-overlay" onClick={() => setShowResetModal(false)}>
+      <div className="reset-modal" onClick={e => e.stopPropagation()}>
+        <div className="reset-header">
+          <h2>⚠️ Reset All Progress</h2>
+          <button className="close-btn" onClick={() => setShowResetModal(false)}>×</button>
+        </div>
+        <div className="reset-content">
+          <p>This will permanently delete:</p>
+          <ul>
+            <li>All workout history</li>
+            <li>Weight progression data</li>
+            <li>Week/day tracking</li>
+          </ul>
+          <p><strong>This action cannot be undone!</strong></p>
+          <div className="reset-buttons">
+            <button className="cancel-btn" onClick={() => setShowResetModal(false)}>
+              Cancel
+            </button>
+            <button className="confirm-reset-btn" onClick={resetProgress}>
+              Yes, Reset Everything
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+
   // Workout selection screen
   if (!workoutActive) {
+    const stats = getWorkoutStats()
     return (
       <div className="app">
         <header className="header">
           <div className="header-content">
             <h1>Hyacinthe</h1>
             <p>Progressive Overload Tracker</p>
+            <div className="program-stats">
+              <span className="week-indicator">Week {stats.week} • {stats.programDay}</span>
+              <span className="workout-count">
+                P: {stats.pushCount} | P: {stats.pullCount} | L: {stats.legsCount}
+              </span>
+            </div>
           </div>
-          <button className="guide-btn" onClick={() => setShowGuide(true)}>
-            📚 Guide
-          </button>
+          <div className="header-buttons">
+            <button className="reset-btn" onClick={() => setShowResetModal(true)}>
+              🗑️
+            </button>
+            <button className="guide-btn" onClick={() => setShowGuide(true)}>
+              📚
+            </button>
+          </div>
         </header>
         
         <main className="main">
           <div className="workout-selection">
             <h2>Choose Your Workout</h2>
             <div className="workout-options">
-              {Object.entries(WORKOUT_PROGRAMS).map(([key, program]) => (
-                <div key={key} className="workout-option">
-                  <div className="workout-info">
-                    <h3>{program.name}</h3>
-                    <p>{program.description}</p>
-                    <div className="exercise-preview">
+              {Object.entries(WORKOUT_PROGRAMS).map(([key, program]) => {
+                const isRecommended = key === stats.nextWorkout
+                const workoutCount = stats[key + 'Count'] || 0
+                return (
+                  <div key={key} className={`workout-option ${isRecommended ? 'recommended' : ''}`}>
+                    {isRecommended && <div className="recommended-badge">⭐ Recommended</div>}
+                    <div className="workout-info">
+                      <h3>{program.name} 
+                        <span className="workout-count-badge">#{workoutCount + 1}</span>
+                      </h3>
+                      <p>{program.description}</p>
+                      <div className="exercise-preview">
                       {program.exercises.map((exercise, index) => (
                         <span key={exercise.id} className="exercise-mini">
                           {exercise.name} {exercise.sets}×{exercise.targetReps[0]}-{exercise.targetReps[1]}
@@ -351,11 +438,13 @@ function App() {
                     Start {program.name}
                   </button>
                 </div>
-              ))}
+                )
+              })}
             </div>
           </div>
         </main>
         {showGuide && <ProgramGuide />}
+        {showResetModal && <ResetModal />}
       </div>
     )
   }
