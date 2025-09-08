@@ -7,33 +7,33 @@ const WORKOUT_PROGRAMS = {
     name: 'Push Day',
     description: 'Chest, Shoulders, Triceps',
     exercises: [
-      { id: 'bench', name: 'Bench Press', sets: 3, targetReps: [6, 8], restTime: 150 },
-      { id: 'ohp', name: 'Overhead Press', sets: 3, targetReps: [6, 8], restTime: 150 },
-      { id: 'incline', name: 'Incline Dumbbell Press', sets: 3, targetReps: [8, 12], restTime: 90 },
-      { id: 'lateral', name: 'Lateral Raises', sets: 3, targetReps: [12, 15], restTime: 90 },
-      { id: 'dips', name: 'Dips', sets: 3, targetReps: [8, 12], restTime: 90 }
+      { id: 'bench', name: 'Bench Press', sets: 3, targetReps: [6, 8], restTime: 150, type: 'compound' },
+      { id: 'ohp', name: 'Overhead Press', sets: 3, targetReps: [6, 8], restTime: 150, type: 'compound' },
+      { id: 'incline', name: 'Incline Dumbbell Press', sets: 3, targetReps: [8, 12], restTime: 90, type: 'compound' },
+      { id: 'lateral', name: 'Lateral Raises', sets: 3, targetReps: [12, 15], restTime: 90, type: 'isolation' },
+      { id: 'dips', name: 'Dips', sets: 3, targetReps: [8, 12], restTime: 90, type: 'compound' }
     ]
   },
   pull: {
     name: 'Pull Day',
     description: 'Back, Biceps, Rear Delts',
     exercises: [
-      { id: 'deadlift', name: 'Deadlift', sets: 3, targetReps: [5, 6], restTime: 150 },
-      { id: 'bbrow', name: 'Barbell Rows', sets: 3, targetReps: [6, 8], restTime: 150 },
-      { id: 'pullups', name: 'Pull-ups/Lat Pulldowns', sets: 3, targetReps: [8, 12], restTime: 90 },
-      { id: 'cablerow', name: 'Cable Rows', sets: 3, targetReps: [10, 12], restTime: 90 },
-      { id: 'curls', name: 'Barbell Curls', sets: 3, targetReps: [8, 12], restTime: 90 }
+      { id: 'deadlift', name: 'Deadlift', sets: 3, targetReps: [5, 6], restTime: 150, type: 'compound' },
+      { id: 'bbrow', name: 'Barbell Rows', sets: 3, targetReps: [6, 8], restTime: 150, type: 'compound' },
+      { id: 'pullups', name: 'Pull-ups/Lat Pulldowns', sets: 3, targetReps: [8, 12], restTime: 90, type: 'compound' },
+      { id: 'cablerow', name: 'Cable Rows', sets: 3, targetReps: [10, 12], restTime: 90, type: 'isolation' },
+      { id: 'curls', name: 'Barbell Curls', sets: 3, targetReps: [8, 12], restTime: 90, type: 'isolation' }
     ]
   },
   legs: {
     name: 'Legs Day',
     description: 'Quads, Hamstrings, Glutes, Calves',
     exercises: [
-      { id: 'squat', name: 'Squat', sets: 3, targetReps: [6, 8], restTime: 150 },
-      { id: 'rdl', name: 'Romanian Deadlift', sets: 3, targetReps: [8, 10], restTime: 150 },
-      { id: 'bss', name: 'Bulgarian Split Squats', sets: 3, targetReps: [10, 12], restTime: 90 },
-      { id: 'legpress', name: 'Leg Press', sets: 3, targetReps: [12, 15], restTime: 90 },
-      { id: 'calves', name: 'Calf Raises', sets: 3, targetReps: [15, 20], restTime: 90 }
+      { id: 'squat', name: 'Squat', sets: 3, targetReps: [6, 8], restTime: 150, type: 'compound' },
+      { id: 'rdl', name: 'Romanian Deadlift', sets: 3, targetReps: [8, 10], restTime: 150, type: 'compound' },
+      { id: 'bss', name: 'Bulgarian Split Squats', sets: 3, targetReps: [10, 12], restTime: 90, type: 'compound' },
+      { id: 'legpress', name: 'Leg Press', sets: 3, targetReps: [12, 15], restTime: 90, type: 'compound' },
+      { id: 'calves', name: 'Calf Raises', sets: 3, targetReps: [15, 20], restTime: 90, type: 'isolation' }
     ]
   }
 }
@@ -97,24 +97,23 @@ function App() {
   }
 
   // Progressive overload logic
-  const calculateProgressiveWeight = (exerciseId, workoutType, lastWorkoutData) => {
+  const calculateProgressiveWeight = (exercise, workoutType, lastWorkoutData) => {
     if (!lastWorkoutData) {
       // First time - return default starting weights
       let startingWeight = 95
-      if (exerciseId === 'deadlift') startingWeight = 135
-      else if (exerciseId === 'squat') startingWeight = 115
-      else if (exerciseId === 'lateral' || exerciseId === 'curls') startingWeight = 25
-      else if (exerciseId === 'calves') startingWeight = 50
+      if (exercise.id === 'deadlift') startingWeight = 135
+      else if (exercise.id === 'squat') startingWeight = 115
+      else if (exercise.id === 'lateral' || exercise.id === 'curls') startingWeight = 25
+      else if (exercise.id === 'calves') startingWeight = 50
       return startingWeight
     }
 
-    const lastExerciseData = lastWorkoutData.exercises[exerciseId]
+    const lastExerciseData = lastWorkoutData.exercises[exercise.id]
     if (!lastExerciseData || !lastExerciseData.sets || lastExerciseData.sets.length === 0) {
       return lastWorkoutData.targetWeight || 95
     }
 
     const lastWeight = lastExerciseData.sets[0].weight
-    const exercise = WORKOUT_PROGRAMS[workoutType].exercises.find(ex => ex.id === exerciseId)
     const targetMin = exercise.targetReps[0]
     const targetMax = exercise.targetReps[1]
     
@@ -128,7 +127,7 @@ function App() {
     
     if (allSetsAtTopRange || setsAboveTarget >= Math.ceil(totalSets / 2)) {
       // NSCA percentage-based increase: 2.5-5% compounds, 5-10% isolation
-      const isCompound = ['squat', 'deadlift', 'bench', 'ohp', 'bbrow', 'rdl'].includes(exerciseId)
+      const isCompound = exercise.type === 'compound'
       const percentage = isCompound ? 0.05 : 0.1  // Use higher end for session-to-session
       const rawIncrease = lastWeight * percentage
       const increment = Math.max(2.5, Math.round(rawIncrease / 2.5) * 2.5)  // Round to nearest 2.5, min 2.5
@@ -139,7 +138,7 @@ function App() {
     // If majority of sets were below target range, decrease weight
     const setsBelowTarget = lastExerciseData.sets.filter(set => set.reps < targetMin).length
     if (setsBelowTarget >= Math.ceil(totalSets / 2)) {
-      const isCompound = ['squat', 'deadlift', 'bench', 'ohp', 'bbrow', 'rdl'].includes(exerciseId)
+      const isCompound = exercise.type === 'compound'
       const percentage = isCompound ? 0.025 : 0.05  // Conservative decrease
       const rawDecrease = lastWeight * percentage
       const decrement = Math.max(2.5, Math.round(rawDecrease / 2.5) * 2.5)  // Round to nearest 2.5, min 2.5
@@ -211,7 +210,7 @@ function App() {
     const initialData = {}
     
     program.exercises.forEach(exercise => {
-      const progressiveWeight = calculateProgressiveWeight(exercise.id, workoutType, lastWorkout)
+      const progressiveWeight = calculateProgressiveWeight(exercise, workoutType, lastWorkout)
       initialData[exercise.id] = {
         targetWeight: progressiveWeight,
         sets: [],
@@ -257,7 +256,7 @@ function App() {
     
     // Within-workout progressive overload: increase weight if at or above target range
     if (repsCompleted >= targetMax && currentSet + 1 < exercise.sets) {
-      const isCompound = ['squat', 'deadlift', 'bench', 'ohp', 'bbrow', 'rdl'].includes(exercise.id)
+      const isCompound = exercise.type === 'compound'
       const currentWeight = updatedData[exercise.id].targetWeight
       
       // NSCA percentages: 2.5-5% compounds, 5-10% isolation
@@ -273,7 +272,7 @@ function App() {
     }
     // Decrease weight if reps were significantly below target (failed badly)
     else if (repsCompleted < targetMin && currentSet + 1 < exercise.sets) {
-      const isCompound = ['squat', 'deadlift', 'bench', 'ohp', 'bbrow', 'rdl'].includes(exercise.id)
+      const isCompound = exercise.type === 'compound'
       const currentWeight = updatedData[exercise.id].targetWeight
       
       // NSCA percentages: 2.5-5% compounds, 5-10% isolation  
