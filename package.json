@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "Progressive overload weight lifting tracker for the Big 5 compound lifts",
+  "description": "NSCA-compliant Gentleman's Split hypertrophy program with automatic progressive overload tracking",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

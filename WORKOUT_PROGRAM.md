@@ -1,77 +1,51 @@
-# Hyacinthe 45-Minute Push/Pull/Legs Hypertrophy Program
+# Hyacinthe 45-Minute Gentleman's Split Hypertrophy Program
 
 ## Program Overview
 
-**Training Schedule**: 3 days per week (e.g., Monday/Wednesday/Friday)
+**Training Schedule**: 4 days per week (e.g., Mon/Tue/Thu/Fri)
+**Split Type**: Gentleman's Split - 2 Upper Body / 2 Lower Body days per week
 **Session Duration**: 45 minutes maximum
 **Focus**: Hypertrophy and body recomposition
-**Volume**: 15 sets per muscle group per week (optimal range: 12-20 sets)
+**Volume**: 16-20 sets per muscle group per week (optimal range: 12-20 sets)
 
 ## Training Split
 
-### **DAY 1: PUSH (Chest, Shoulders, Triceps)**
-*Target Time: 43 minutes*
+### **DAY 1: UPPER 1 (Chest, Back, Shoulders)**
+*Target Time: 42 minutes*
 
 1. **Bench Press** - 3 sets × 6-8 reps
    - Rest: 2-2.5 minutes
    - Primary chest and tricep builder
    
-2. **Overhead Press** - 3 sets × 6-8 reps
-   - Rest: 2-2.5 minutes
-   - Compound shoulder and core strength
-   
-3. **Incline Dumbbell Press** - 3 sets × 8-12 reps
-   - Rest: 90 seconds
-   - Upper chest focus
-   
-4. **Lateral Raises** - 3 sets × 12-15 reps
-   - Rest: 90 seconds
-   - Shoulder width and definition
-   
-5. **Dips** - 3 sets × 8-12 reps
-   - Rest: 90 seconds
-   - Tricep and lower chest finisher
-
-**Total Sets**: 15 | **Estimated Time**: 43 minutes
-
----
-
-### **DAY 2: PULL (Back, Biceps, Rear Delts)**
-*Target Time: 43 minutes*
-
-1. **Deadlift** - 3 sets × 5-6 reps
-   - Rest: 2-2.5 minutes
-   - Full posterior chain strength
-   
 2. **Barbell Rows** - 3 sets × 6-8 reps
    - Rest: 2-2.5 minutes
    - Mid-trap and rhomboid focus
    
-3. **Pull-ups/Lat Pulldowns** - 3 sets × 8-12 reps
+3. **Overhead Press** - 3 sets × 8-10 reps
+   - Rest: 2 minutes
+   - Compound shoulder and core strength
+   
+4. **Pull-ups/Lat Pulldowns** - 3 sets × 8-12 reps
    - Rest: 90 seconds
    - Lat width and V-taper
    
-4. **Cable Rows** - 3 sets × 10-12 reps
+5. **Dips** - 3 sets × 10-15 reps
    - Rest: 90 seconds
-   - Mid-trap thickness
-   
-5. **Barbell Curls** - 3 sets × 8-12 reps
-   - Rest: 90 seconds
-   - Bicep mass and strength
+   - Tricep and lower chest finisher
 
-**Total Sets**: 15 | **Estimated Time**: 43 minutes
+**Total Sets**: 15 | **Estimated Time**: 42 minutes
 
 ---
 
-### **DAY 3: LEGS (Quads, Hamstrings, Glutes, Calves)**
-*Target Time: 43 minutes*
+### **DAY 2: LOWER 1 (Quads, Glutes, Calves)**
+*Target Time: 44 minutes*
 
-1. **Squat** - 3 sets × 6-8 reps
+1. **Squat** - 4 sets × 6-8 reps
    - Rest: 2-2.5 minutes
-   - Quad and glute strength foundation
+   - Primary quad and glute strength
    
 2. **Romanian Deadlift** - 3 sets × 8-10 reps
-   - Rest: 2-2.5 minutes
+   - Rest: 2 minutes
    - Hamstring and glute hypertrophy
    
 3. **Bulgarian Split Squats** - 3 sets × 10-12 reps each leg
@@ -82,11 +56,65 @@
    - Rest: 90 seconds
    - High-volume quad and glute finisher
    
-5. **Calf Raises** - 3 sets × 15-20 reps
-   - Rest: 90 seconds
+5. **Calf Raises** - 4 sets × 15-20 reps
+   - Rest: 60 seconds
    - Calf size and definition
 
-**Total Sets**: 15 | **Estimated Time**: 43 minutes
+**Total Sets**: 17 | **Estimated Time**: 44 minutes
+
+---
+
+### **DAY 3: UPPER 2 (Arms, Shoulders, Back)**
+*Target Time: 36 minutes*
+
+1. **Incline Dumbbell Press** - 3 sets × 8-12 reps
+   - Rest: 2 minutes
+   - Upper chest focus
+   
+2. **Cable Rows** - 3 sets × 10-12 reps
+   - Rest: 90 seconds
+   - Mid-trap thickness
+   
+3. **Lateral Raises** - 3 sets × 12-15 reps
+   - Rest: 60 seconds
+   - Shoulder width and definition
+   
+4. **Barbell Curls** - 3 sets × 10-12 reps
+   - Rest: 60 seconds
+   - Bicep mass and strength
+   
+5. **Tricep Extensions** - 3 sets × 10-12 reps
+   - Rest: 60 seconds
+   - Tricep isolation and shape
+
+**Total Sets**: 15 | **Estimated Time**: 36 minutes
+
+---
+
+### **DAY 4: LOWER 2 (Hamstrings, Glutes, Posterior)**
+*Target Time: 43 minutes*
+
+1. **Deadlift** - 4 sets × 5-6 reps
+   - Rest: 3 minutes
+   - Full posterior chain strength
+   
+2. **Hip Thrusts** - 3 sets × 8-12 reps
+   - Rest: 90 seconds
+   - Glute isolation and strength
+   
+3. **Hamstring Curls** - 3 sets × 12-15 reps
+   - Rest: 60 seconds
+   - Hamstring isolation
+   
+4. **Stiff Leg Deadlift** - 3 sets × 10-12 reps
+   - Rest: 90 seconds
+   - Hamstring and glute stretch-focus
+   
+5. **Single-Leg Glute Bridge** - 3 sets × 12-15 reps each leg
+   - Rest: 60 seconds
+   - Unilateral glute activation
+
+**Total Sets**: 16 | **Estimated Time**: 43 minutes
 
 ---
 
@@ -149,11 +177,12 @@ The Hyacinthe app automatically:
 - **Isolation exercises**: 90 seconds (hypertrophy and time efficiency)
 
 ## Weekly Volume Distribution
-Each muscle group receives **15 sets per week**:
-- **Chest**: 9 direct + 6 indirect (from shoulders/triceps) = 15 total
-- **Back**: 9 direct + 6 indirect (from deadlifts/biceps) = 15 total  
-- **Shoulders**: 6 direct + 9 indirect (from pressing) = 15 total
-- **Legs**: 15 direct sets covering all major muscle groups
+Each muscle group receives **16-20 sets per week**:
+- **Chest**: 12 direct + 6 indirect (from shoulders/triceps) = 18 total
+- **Back**: 15 direct + 3 indirect (from deadlifts) = 18 total  
+- **Shoulders**: 9 direct + 9 indirect (from pressing) = 18 total
+- **Legs**: 17-20 direct sets covering all major muscle groups
+- **Arms**: 12 direct + 6 indirect (from compounds) = 18 total
 
 ## Program Progression
 
@@ -173,18 +202,20 @@ Each muscle group receives **15 sets per week**:
 
 ## Exercise Substitutions
 
-**Push Day Alternatives:**
-- Incline Barbell Press → Incline Dumbbell Press
-- Dips → Close-Grip Bench Press
+**Upper Day Alternatives:**
+- Pull-ups → Lat Pulldowns or Assisted Pull-ups
+- Dips → Close-Grip Bench Press or Tricep Pushdowns
+- Barbell Rows → T-Bar Rows or Chest-Supported Rows
 - Lateral Raises → Cable Lateral Raises
 
-**Pull Day Alternatives:**
-- Pull-ups → Lat Pulldowns
-- Barbell Rows → T-Bar Rows
-- Cable Rows → Chest-Supported Rows
+**Lower Day Alternatives:**
+- Hip Thrusts → Glute Bridges or Bulgarian Split Squats
+- Hamstring Curls → Good Mornings or Stiff Leg Deadlifts
+- Bulgarian Split Squats → Walking Lunges or Step-ups
+- Single-Leg Glute Bridge → Clamshells or Lateral Walks
 
-**Leg Day Alternatives:**
-- Bulgarian Split Squats → Walking Lunges
+**Universal Alternatives:**
+- Cable Rows → Chest-Supported Rows
 - Goblet Squats → Step-ups or Single-Leg RDLs
 - Calf Raises → Seated Calf Raises
 

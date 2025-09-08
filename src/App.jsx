@@ -1,39 +1,50 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 
-// Push/Pull/Legs Workout Programs
+// Gentleman's Split Workout Programs (2 Upper / 2 Lower per week)
 const WORKOUT_PROGRAMS = {
-  push: {
-    name: 'Push Day',
-    description: 'Chest, Shoulders, Triceps',
+  upper1: {
+    name: 'Upper 1',
+    description: 'Chest, Back, Shoulders',
     exercises: [
       { id: 'bench', name: 'Bench Press', sets: 3, targetReps: [6, 8], restTime: 150, type: 'compound' },
-      { id: 'ohp', name: 'Overhead Press', sets: 3, targetReps: [6, 8], restTime: 150, type: 'compound' },
-      { id: 'incline', name: 'Incline Dumbbell Press', sets: 3, targetReps: [8, 12], restTime: 90, type: 'compound' },
-      { id: 'lateral', name: 'Lateral Raises', sets: 3, targetReps: [12, 15], restTime: 90, type: 'isolation' },
-      { id: 'dips', name: 'Dips', sets: 3, targetReps: [8, 12], restTime: 90, type: 'compound' }
-    ]
-  },
-  pull: {
-    name: 'Pull Day',
-    description: 'Back, Biceps, Rear Delts',
-    exercises: [
-      { id: 'deadlift', name: 'Deadlift', sets: 3, targetReps: [5, 6], restTime: 150, type: 'compound' },
       { id: 'bbrow', name: 'Barbell Rows', sets: 3, targetReps: [6, 8], restTime: 150, type: 'compound' },
+      { id: 'ohp', name: 'Overhead Press', sets: 3, targetReps: [8, 10], restTime: 120, type: 'compound' },
       { id: 'pullups', name: 'Pull-ups/Lat Pulldowns', sets: 3, targetReps: [8, 12], restTime: 90, type: 'compound' },
-      { id: 'cablerow', name: 'Cable Rows', sets: 3, targetReps: [10, 12], restTime: 90, type: 'isolation' },
-      { id: 'curls', name: 'Barbell Curls', sets: 3, targetReps: [8, 12], restTime: 90, type: 'isolation' }
+      { id: 'dips', name: 'Dips', sets: 3, targetReps: [10, 15], restTime: 90, type: 'compound' }
     ]
   },
-  legs: {
-    name: 'Legs Day',
-    description: 'Quads, Hamstrings, Glutes, Calves',
+  lower1: {
+    name: 'Lower 1',
+    description: 'Quads, Glutes, Calves',
     exercises: [
-      { id: 'squat', name: 'Squat', sets: 3, targetReps: [6, 8], restTime: 150, type: 'compound' },
-      { id: 'rdl', name: 'Romanian Deadlift', sets: 3, targetReps: [8, 10], restTime: 150, type: 'compound' },
+      { id: 'squat', name: 'Squat', sets: 4, targetReps: [6, 8], restTime: 150, type: 'compound' },
+      { id: 'rdl', name: 'Romanian Deadlift', sets: 3, targetReps: [8, 10], restTime: 120, type: 'compound' },
       { id: 'bss', name: 'Bulgarian Split Squats', sets: 3, targetReps: [10, 12], restTime: 90, type: 'compound' },
       { id: 'gobletsquat', name: 'Goblet Squats', sets: 3, targetReps: [12, 15], restTime: 90, type: 'compound' },
-      { id: 'calves', name: 'Calf Raises', sets: 3, targetReps: [15, 20], restTime: 90, type: 'isolation' }
+      { id: 'calves', name: 'Calf Raises', sets: 4, targetReps: [15, 20], restTime: 60, type: 'isolation' }
+    ]
+  },
+  upper2: {
+    name: 'Upper 2',
+    description: 'Arms, Shoulders, Back',
+    exercises: [
+      { id: 'incline', name: 'Incline Dumbbell Press', sets: 3, targetReps: [8, 12], restTime: 120, type: 'compound' },
+      { id: 'cablerow', name: 'Cable Rows', sets: 3, targetReps: [10, 12], restTime: 90, type: 'isolation' },
+      { id: 'lateral', name: 'Lateral Raises', sets: 3, targetReps: [12, 15], restTime: 60, type: 'isolation' },
+      { id: 'curls', name: 'Barbell Curls', sets: 3, targetReps: [10, 12], restTime: 60, type: 'isolation' },
+      { id: 'tricepext', name: 'Tricep Extensions', sets: 3, targetReps: [10, 12], restTime: 60, type: 'isolation' }
+    ]
+  },
+  lower2: {
+    name: 'Lower 2', 
+    description: 'Hamstrings, Glutes, Posterior',
+    exercises: [
+      { id: 'deadlift', name: 'Deadlift', sets: 4, targetReps: [5, 6], restTime: 180, type: 'compound' },
+      { id: 'hipthrust', name: 'Hip Thrusts', sets: 3, targetReps: [8, 12], restTime: 90, type: 'compound' },
+      { id: 'hamcurl', name: 'Hamstring Curls', sets: 3, targetReps: [12, 15], restTime: 60, type: 'isolation' },
+      { id: 'sldl', name: 'Stiff Leg Deadlift', sets: 3, targetReps: [10, 12], restTime: 90, type: 'compound' },
+      { id: 'glutebridge', name: 'Single-Leg Glute Bridge', sets: 3, targetReps: [12, 15], restTime: 60, type: 'isolation' }
     ]
   }
 }
@@ -125,7 +136,12 @@ function App() {
       'rdl': 95,
       'bss': 25,
       'gobletsquat': 35,
-      'calves': 50
+      'calves': 50,
+      'tricepext': 30,
+      'hipthrust': 95,
+      'hamcurl': 40,
+      'sldl': 85,
+      'glutebridge': 0 // bodyweight
     }
     return defaults[exerciseId] || 45
   }
@@ -197,30 +213,33 @@ function App() {
   // Week/Day tracking functions
   const getWorkoutStats = () => {
     const workoutHistory = JSON.parse(localStorage.getItem('workoutHistory') || '[]')
-    const pushCount = workoutHistory.filter(w => w.workoutType === 'push').length
-    const pullCount = workoutHistory.filter(w => w.workoutType === 'pull').length
-    const legsCount = workoutHistory.filter(w => w.workoutType === 'legs').length
+    const upper1Count = workoutHistory.filter(w => w.workoutType === 'upper1').length
+    const lower1Count = workoutHistory.filter(w => w.workoutType === 'lower1').length
+    const upper2Count = workoutHistory.filter(w => w.workoutType === 'upper2').length
+    const lower2Count = workoutHistory.filter(w => w.workoutType === 'lower2').length
     
     const totalWorkouts = workoutHistory.length
-    const currentWeek = Math.floor(totalWorkouts / 3) + 1
-    const workoutsThisWeek = totalWorkouts % 3
+    const currentWeek = Math.floor(totalWorkouts / 4) + 1
+    const workoutsThisWeek = totalWorkouts % 4
     
-    // Determine next recommended workout
-    const counts = { push: pushCount, pull: pullCount, legs: legsCount }
-    const minCount = Math.min(pushCount, pullCount, legsCount)
+    // Determine next recommended workout (priority: Upper1, Lower1, Upper2, Lower2)
+    const counts = { upper1: upper1Count, lower1: lower1Count, upper2: upper2Count, lower2: lower2Count }
+    const minCount = Math.min(upper1Count, lower1Count, upper2Count, lower2Count)
     let nextWorkout = null
     
-    if (pushCount === minCount) nextWorkout = 'push'
-    else if (pullCount === minCount) nextWorkout = 'pull'
-    else if (legsCount === minCount) nextWorkout = 'legs'
+    if (upper1Count === minCount) nextWorkout = 'upper1'
+    else if (lower1Count === minCount) nextWorkout = 'lower1'
+    else if (upper2Count === minCount) nextWorkout = 'upper2'
+    else if (lower2Count === minCount) nextWorkout = 'lower2'
     
     return {
       week: currentWeek,
       workoutsThisWeek,
       totalWorkouts,
-      pushCount,
-      pullCount,
-      legsCount,
+      upper1Count,
+      lower1Count,
+      upper2Count,
+      lower2Count,
       nextWorkout,
       programDay: totalWorkouts > 0 ? `Day ${totalWorkouts}` : 'Start Program'
     }
@@ -353,10 +372,11 @@ function App() {
         <div className="guide-content">
           <section className="guide-section">
             <h3>Program Overview</h3>
-            <p><strong>Schedule:</strong> 3 days per week (e.g., Mon/Wed/Fri)</p>
+            <p><strong>Schedule:</strong> 4 days per week (e.g., Mon/Tue/Thu/Fri)</p>
+            <p><strong>Split:</strong> Gentleman's Split - 2 Upper / 2 Lower per week</p>
             <p><strong>Duration:</strong> 45 minutes maximum per session</p>
             <p><strong>Focus:</strong> Hypertrophy and body recomposition</p>
-            <p><strong>Volume:</strong> 15 sets per muscle group per week</p>
+            <p><strong>Volume:</strong> 16-20 sets per muscle group per week</p>
           </section>
 
           <section className="guide-section">
@@ -404,9 +424,9 @@ function App() {
           <section className="guide-section">
             <h3>Exercise Substitutions</h3>
             <div className="substitutions">
-              <div><strong>Push Day:</strong> Dips ↔ Close-Grip Bench, Lateral Raises ↔ Cable Laterals</div>
-              <div><strong>Pull Day:</strong> Pull-ups ↔ Lat Pulldowns, Barbell Rows ↔ T-Bar Rows</div>
-              <div><strong>Leg Day:</strong> Bulgarian Split Squats ↔ Walking Lunges, Goblet Squats ↔ Step-ups</div>
+              <div><strong>Upper Days:</strong> Pull-ups ↔ Lat Pulldowns, Dips ↔ Close-Grip Bench</div>
+              <div><strong>Lower Days:</strong> Hip Thrusts ↔ Glute Bridges, Hamstring Curls ↔ Good Mornings</div>
+              <div><strong>Universal:</strong> Bulgarian Split Squats ↔ Walking Lunges</div>
             </div>
           </section>
 
@@ -573,7 +593,7 @@ function App() {
             <div className="program-stats">
               <span className="week-indicator">Week {stats.week} • {stats.programDay}</span>
               <span className="workout-count">
-                P: {stats.pushCount} | P: {stats.pullCount} | L: {stats.legsCount}
+                U1: {stats.upper1Count} | L1: {stats.lower1Count} | U2: {stats.upper2Count} | L2: {stats.lower2Count}
               </span>
             </div>
           </div>

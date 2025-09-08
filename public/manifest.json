@@ -1,7 +1,7 @@
 {
   "name": "Hyacinthe - Progressive Overload Tracker",
   "short_name": "Hyacinthe",
-  "description": "Progressive overload weight lifting tracker for the Big 5 compound lifts",
+  "description": "NSCA-compliant Gentleman's Split hypertrophy program with automatic progressive overload tracking",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0f0f0f",
