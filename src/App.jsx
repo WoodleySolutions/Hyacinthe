@@ -127,9 +127,12 @@ function App() {
     const allSetsAtTopRange = lastExerciseData.sets.every(set => set.reps >= targetMax)
     
     if (allSetsAtTopRange || setsAboveTarget >= Math.ceil(totalSets / 2)) {
-      // Increase weight - compound vs isolation increment
+      // NSCA percentage-based increase: 2.5-5% compounds, 5-10% isolation
       const isCompound = ['squat', 'deadlift', 'bench', 'ohp', 'bbrow', 'rdl'].includes(exerciseId)
-      const increment = isCompound ? 5 : 2.5
+      const percentage = isCompound ? 0.05 : 0.1  // Use higher end for session-to-session
+      const rawIncrease = lastWeight * percentage
+      const increment = Math.max(2.5, Math.round(rawIncrease / 2.5) * 2.5)  // Round to nearest 2.5, min 2.5
+      
       return lastWeight + increment
     }
     
@@ -137,7 +140,10 @@ function App() {
     const setsBelowTarget = lastExerciseData.sets.filter(set => set.reps < targetMin).length
     if (setsBelowTarget >= Math.ceil(totalSets / 2)) {
       const isCompound = ['squat', 'deadlift', 'bench', 'ohp', 'bbrow', 'rdl'].includes(exerciseId)
-      const decrement = isCompound ? 5 : 2.5
+      const percentage = isCompound ? 0.025 : 0.05  // Conservative decrease
+      const rawDecrease = lastWeight * percentage
+      const decrement = Math.max(2.5, Math.round(rawDecrease / 2.5) * 2.5)  // Round to nearest 2.5, min 2.5
+      
       return Math.max(lastWeight - decrement, 25) // Don't go below 25 lbs
     }
     
@@ -249,10 +255,16 @@ function App() {
       targetReps: exercise.targetReps
     })
     
-    // Within-workout progressive overload: increase weight if reps exceeded target range
-    if (repsCompleted > targetMax && currentSet + 1 < exercise.sets) {
+    // Within-workout progressive overload: increase weight if at or above target range
+    if (repsCompleted >= targetMax && currentSet + 1 < exercise.sets) {
       const isCompound = ['squat', 'deadlift', 'bench', 'ohp', 'bbrow', 'rdl'].includes(exercise.id)
-      const increment = isCompound ? 5 : 2.5
+      const currentWeight = updatedData[exercise.id].targetWeight
+      
+      // NSCA percentages: 2.5-5% compounds, 5-10% isolation
+      const percentage = isCompound ? 0.025 : 0.05  // Use lower end for within-workout
+      const rawIncrease = currentWeight * percentage
+      const increment = Math.max(2.5, Math.round(rawIncrease / 2.5) * 2.5)  // Round to nearest 2.5, min 2.5
+      
       updatedData[exercise.id].targetWeight += increment
       
       // Track that weight was increased for this exercise
@@ -260,9 +272,15 @@ function App() {
       updatedData[exercise.id].lastIncrement = increment
     }
     // Decrease weight if reps were significantly below target (failed badly)
-    else if (repsCompleted < targetMin - 1 && currentSet + 1 < exercise.sets) {
+    else if (repsCompleted < targetMin && currentSet + 1 < exercise.sets) {
       const isCompound = ['squat', 'deadlift', 'bench', 'ohp', 'bbrow', 'rdl'].includes(exercise.id)
-      const decrement = isCompound ? 5 : 2.5
+      const currentWeight = updatedData[exercise.id].targetWeight
+      
+      // NSCA percentages: 2.5-5% compounds, 5-10% isolation  
+      const percentage = isCompound ? 0.025 : 0.05  // Conservative decrease
+      const rawDecrease = currentWeight * percentage
+      const decrement = Math.max(2.5, Math.round(rawDecrease / 2.5) * 2.5)  // Round to nearest 2.5, min 2.5
+      
       updatedData[exercise.id].targetWeight = Math.max(updatedData[exercise.id].targetWeight - decrement, 25)
       
       // Track that weight was decreased
