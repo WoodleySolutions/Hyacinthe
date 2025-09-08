@@ -32,7 +32,7 @@ const WORKOUT_PROGRAMS = {
       { id: 'squat', name: 'Squat', sets: 3, targetReps: [6, 8], restTime: 150, type: 'compound' },
       { id: 'rdl', name: 'Romanian Deadlift', sets: 3, targetReps: [8, 10], restTime: 150, type: 'compound' },
       { id: 'bss', name: 'Bulgarian Split Squats', sets: 3, targetReps: [10, 12], restTime: 90, type: 'compound' },
-      { id: 'legpress', name: 'Leg Press', sets: 3, targetReps: [12, 15], restTime: 90, type: 'compound' },
+      { id: 'gobletsquat', name: 'Goblet Squats', sets: 3, targetReps: [12, 15], restTime: 90, type: 'compound' },
       { id: 'calves', name: 'Calf Raises', sets: 3, targetReps: [15, 20], restTime: 90, type: 'isolation' }
     ]
   }
@@ -124,7 +124,7 @@ function App() {
       'squat': 115,
       'rdl': 95,
       'bss': 25,
-      'legpress': 180,
+      'gobletsquat': 35,
       'calves': 50
     }
     return defaults[exerciseId] || 45
@@ -406,7 +406,7 @@ function App() {
             <div className="substitutions">
               <div><strong>Push Day:</strong> Dips ↔ Close-Grip Bench, Lateral Raises ↔ Cable Laterals</div>
               <div><strong>Pull Day:</strong> Pull-ups ↔ Lat Pulldowns, Barbell Rows ↔ T-Bar Rows</div>
-              <div><strong>Leg Day:</strong> Bulgarian Split Squats ↔ Walking Lunges, Leg Press ↔ Goblet Squats</div>
+              <div><strong>Leg Day:</strong> Bulgarian Split Squats ↔ Walking Lunges, Goblet Squats ↔ Step-ups</div>
             </div>
           </section>
 

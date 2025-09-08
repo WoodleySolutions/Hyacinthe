@@ -78,9 +78,9 @@
    - Rest: 90 seconds
    - Unilateral quad and glute work
    
-4. **Leg Press** - 3 sets × 12-15 reps
+4. **Goblet Squats** - 3 sets × 12-15 reps
    - Rest: 90 seconds
-   - High-volume quad finisher
+   - High-volume quad and glute finisher
    
 5. **Calf Raises** - 3 sets × 15-20 reps
    - Rest: 90 seconds
@@ -185,7 +185,7 @@ Each muscle group receives **15 sets per week**:
 
 **Leg Day Alternatives:**
 - Bulgarian Split Squats → Walking Lunges
-- Leg Press → Goblet Squats
+- Goblet Squats → Step-ups or Single-Leg RDLs
 - Calf Raises → Seated Calf Raises
 
 ---
