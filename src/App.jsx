@@ -199,6 +199,8 @@ function App() {
     const program = WORKOUT_PROGRAMS[selectedWorkout]
     const exercise = program.exercises[currentExercise]
     const updatedData = { ...workoutData }
+    const targetMin = exercise.targetReps[0]
+    const targetMax = exercise.targetReps[1]
     
     // Record the set
     updatedData[exercise.id].sets.push({
@@ -206,6 +208,27 @@ function App() {
       reps: repsCompleted,
       targetReps: exercise.targetReps
     })
+    
+    // Within-workout progressive overload: increase weight if reps exceeded target range
+    if (repsCompleted > targetMax && currentSet + 1 < exercise.sets) {
+      const isCompound = ['squat', 'deadlift', 'bench', 'ohp', 'bbrow'].includes(exercise.id)
+      const increment = isCompound ? 5 : 2.5
+      updatedData[exercise.id].targetWeight += increment
+      
+      // Track that weight was increased for this exercise
+      updatedData[exercise.id].weightIncreased = true
+      updatedData[exercise.id].lastIncrement = increment
+    }
+    // Decrease weight if reps were significantly below target (failed badly)
+    else if (repsCompleted < targetMin - 1 && currentSet + 1 < exercise.sets) {
+      const isCompound = ['squat', 'deadlift', 'bench', 'ohp', 'bbrow'].includes(exercise.id)
+      const decrement = isCompound ? 5 : 2.5
+      updatedData[exercise.id].targetWeight = Math.max(updatedData[exercise.id].targetWeight - decrement, 25)
+      
+      // Track that weight was decreased
+      updatedData[exercise.id].weightDecreased = true
+      updatedData[exercise.id].lastDecrement = decrement
+    }
     
     setWorkoutData(updatedData)
     
@@ -393,6 +416,18 @@ function App() {
                   (was {workoutData[exercise.id].lastWeight} lbs)
                 </span>
               )}
+            </div>
+          )}
+          
+          {/* Within-workout weight changes */}
+          {currentSet > 0 && workoutData[exercise.id]?.weightIncreased && (
+            <div className="weight-change-notification increased">
+              🚀 Weight increased +{workoutData[exercise.id].lastIncrement} lbs for next set!
+            </div>
+          )}
+          {currentSet > 0 && workoutData[exercise.id]?.weightDecreased && (
+            <div className="weight-change-notification decreased">
+              ⚡ Weight decreased -{workoutData[exercise.id].lastDecrement} lbs for next set
             </div>
           )}
         </div>
