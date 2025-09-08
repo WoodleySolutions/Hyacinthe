@@ -1,0 +1,24 @@
+{
+  "name": "Hyacinthe - Progressive Overload Tracker",
+  "short_name": "Hyacinthe",
+  "description": "Progressive overload weight lifting tracker for the Big 5 compound lifts",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f0f0f",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512", 
+      "type": "image/png"
+    }
+  ],
+  "categories": ["health", "fitness", "sports"],
+  "lang": "en"
+}
