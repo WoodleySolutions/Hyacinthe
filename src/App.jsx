@@ -128,7 +128,7 @@ function App() {
     
     if (allSetsAtTopRange || setsAboveTarget >= Math.ceil(totalSets / 2)) {
       // Increase weight - compound vs isolation increment
-      const isCompound = ['squat', 'deadlift', 'bench', 'ohp', 'bbrow'].includes(exerciseId)
+      const isCompound = ['squat', 'deadlift', 'bench', 'ohp', 'bbrow', 'rdl'].includes(exerciseId)
       const increment = isCompound ? 5 : 2.5
       return lastWeight + increment
     }
@@ -136,7 +136,7 @@ function App() {
     // If majority of sets were below target range, decrease weight
     const setsBelowTarget = lastExerciseData.sets.filter(set => set.reps < targetMin).length
     if (setsBelowTarget >= Math.ceil(totalSets / 2)) {
-      const isCompound = ['squat', 'deadlift', 'bench', 'ohp', 'bbrow'].includes(exerciseId)
+      const isCompound = ['squat', 'deadlift', 'bench', 'ohp', 'bbrow', 'rdl'].includes(exerciseId)
       const decrement = isCompound ? 5 : 2.5
       return Math.max(lastWeight - decrement, 25) // Don't go below 25 lbs
     }
@@ -251,7 +251,7 @@ function App() {
     
     // Within-workout progressive overload: increase weight if reps exceeded target range
     if (repsCompleted > targetMax && currentSet + 1 < exercise.sets) {
-      const isCompound = ['squat', 'deadlift', 'bench', 'ohp', 'bbrow'].includes(exercise.id)
+      const isCompound = ['squat', 'deadlift', 'bench', 'ohp', 'bbrow', 'rdl'].includes(exercise.id)
       const increment = isCompound ? 5 : 2.5
       updatedData[exercise.id].targetWeight += increment
       
@@ -261,7 +261,7 @@ function App() {
     }
     // Decrease weight if reps were significantly below target (failed badly)
     else if (repsCompleted < targetMin - 1 && currentSet + 1 < exercise.sets) {
-      const isCompound = ['squat', 'deadlift', 'bench', 'ohp', 'bbrow'].includes(exercise.id)
+      const isCompound = ['squat', 'deadlift', 'bench', 'ohp', 'bbrow', 'rdl'].includes(exercise.id)
       const decrement = isCompound ? 5 : 2.5
       updatedData[exercise.id].targetWeight = Math.max(updatedData[exercise.id].targetWeight - decrement, 25)
       
