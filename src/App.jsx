@@ -49,6 +49,18 @@ function App() {
   const [restActive, setRestActive] = useState(false)
   const [showGuide, setShowGuide] = useState(false)
   const [showResetModal, setShowResetModal] = useState(false)
+  const [showOnboarding, setShowOnboarding] = useState(false)
+  const [initialWeights, setInitialWeights] = useState({})
+
+  // Check if user has completed onboarding
+  useEffect(() => {
+    const savedWeights = localStorage.getItem('initialWeights')
+    if (!savedWeights) {
+      setShowOnboarding(true)
+    } else {
+      setInitialWeights(JSON.parse(savedWeights))
+    }
+  }, [])
 
   // Request screen wake lock when workout starts
   const requestWakeLock = async () => {
@@ -96,16 +108,40 @@ function App() {
     setRestActive(true)
   }
 
+  // Fallback default weights function
+  const getDefaultWeight = (exerciseId) => {
+    const defaults = {
+      'bench': 95,
+      'ohp': 65,
+      'incline': 50,
+      'lateral': 15,
+      'dips': 0, // bodyweight
+      'deadlift': 135,
+      'bbrow': 75,
+      'pullups': 0, // bodyweight
+      'cablerow': 60,
+      'curls': 25,
+      'squat': 115,
+      'rdl': 95,
+      'bss': 25,
+      'legpress': 180,
+      'calves': 50
+    }
+    return defaults[exerciseId] || 45
+  }
+
+  // Complete onboarding and save weights
+  const completeOnboarding = (weights) => {
+    localStorage.setItem('initialWeights', JSON.stringify(weights))
+    setInitialWeights(weights)
+    setShowOnboarding(false)
+  }
+
   // Progressive overload logic
   const calculateProgressiveWeight = (exercise, workoutType, lastWorkoutData) => {
     if (!lastWorkoutData) {
-      // First time - return default starting weights
-      let startingWeight = 95
-      if (exercise.id === 'deadlift') startingWeight = 135
-      else if (exercise.id === 'squat') startingWeight = 115
-      else if (exercise.id === 'lateral' || exercise.id === 'curls') startingWeight = 25
-      else if (exercise.id === 'calves') startingWeight = 50
-      return startingWeight
+      // First time - return user's initial weight or fallback defaults
+      return initialWeights[exercise.id] || getDefaultWeight(exercise.id)
     }
 
     const lastExerciseData = lastWorkoutData.exercises[exercise.id]
@@ -192,9 +228,10 @@ function App() {
 
   const resetProgress = () => {
     localStorage.removeItem('workoutHistory')
+    localStorage.removeItem('initialWeights')
     setShowResetModal(false)
-    // Force re-render to update stats
-    window.location.reload()
+    setShowOnboarding(true)
+    setInitialWeights({})
   }
 
   const startWorkout = (workoutType) => {
@@ -323,25 +360,39 @@ function App() {
           </section>
 
           <section className="guide-section">
-            <h3>Progressive Overload Guidelines</h3>
+            <h3>Initial Weight Assessment</h3>
+            <div className="nsca-warning">
+              <p><strong>⚠️ NSCA Guidelines:</strong> NO 1RM testing for beginners! Risk of injury and excessive soreness.</p>
+            </div>
+            <p><strong>Safe Assessment:</strong> Start with weights allowing 8-12 reps with 2-3 reps in reserve</p>
+            <div className="starting-weights">
+              <div><strong>Bench:</strong> 0.5-0.75x bodyweight</div>
+              <div><strong>Squat:</strong> 0.75-1.0x bodyweight</div>
+              <div><strong>Deadlift:</strong> 1.0-1.25x bodyweight</div>
+              <div><strong>Key:</strong> Better too light than too heavy!</div>
+            </div>
+          </section>
+          <section className="guide-section">
+            <h3>Progressive Overload (NSCA "2 for 2 Rule")</h3>
             <div className="progression-rules">
               <div className="rule">
-                <strong>6-8 reps:</strong> Strength focus - increase weight when you complete all sets at top range
+                <strong>Primary Method:</strong> If you can do 2+ reps AT OR ABOVE target range for 2 consecutive workouts, increase weight
               </div>
               <div className="rule">
-                <strong>8-12 reps:</strong> Hypertrophy sweet spot - increase weight when completing 12 reps on all sets
+                <strong>Automatic:</strong> App calculates new weights using NSCA percentage-based increases
               </div>
               <div className="rule">
-                <strong>12-20 reps:</strong> Metabolic stress - focus on muscle fatigue and mind-muscle connection
+                <strong>Within-workout:</strong> Weight increases if you exceed target reps during the session
               </div>
             </div>
           </section>
 
           <section className="guide-section">
-            <h3>Weight Progression</h3>
-            <p><strong>Compound movements:</strong> +5-10 lbs when target achieved</p>
-            <p><strong>Isolation movements:</strong> +2.5-5 lbs when target achieved</p>
-            <p><strong>"2 for 2 Rule":</strong> If you can do 2+ extra reps beyond target range for 2 consecutive workouts, increase weight</p>
+            <h3>Weight Progression (Percentage-Based)</h3>
+            <p><strong>Compound movements:</strong> 2.5-5% increase (min 2.5 lbs)</p>
+            <p><strong>Isolation movements:</strong> 5-10% increase (min 2.5 lbs)</p>
+            <p><strong>Smart Rounding:</strong> All increases rounded to nearest 2.5 lb increment</p>
+            <p><strong>Automatic Tracking:</strong> App handles all calculations for you</p>
           </section>
 
           <section className="guide-section">
@@ -398,6 +449,117 @@ function App() {
       </div>
     </div>
   )
+
+  // Onboarding component
+  const OnboardingScreen = () => {
+    const [weights, setWeights] = useState({})
+    const [currentStep, setCurrentStep] = useState(0)
+
+    // Get all unique exercises from all workout programs
+    const allExercises = []
+    Object.values(WORKOUT_PROGRAMS).forEach(program => {
+      program.exercises.forEach(exercise => {
+        if (!allExercises.find(ex => ex.id === exercise.id)) {
+          allExercises.push(exercise)
+        }
+      })
+    })
+
+    const handleWeightChange = (exerciseId, weight) => {
+      setWeights(prev => ({
+        ...prev,
+        [exerciseId]: parseFloat(weight) || 0
+      }))
+    }
+
+    const handleSubmit = () => {
+      // Fill in any missing weights with defaults
+      const completeWeights = {}
+      allExercises.forEach(exercise => {
+        completeWeights[exercise.id] = weights[exercise.id] || getDefaultWeight(exercise.id)
+      })
+      completeOnboarding(completeWeights)
+    }
+
+    const getSuggestedWeight = (exercise) => {
+      // Bodyweight suggestions based on research
+      if (exercise.id === 'bench') return '0.5-0.75x bodyweight'
+      if (exercise.id === 'squat') return '0.75-1.0x bodyweight'
+      if (exercise.id === 'deadlift') return '1.0-1.25x bodyweight'
+      if (exercise.id === 'dips' || exercise.id === 'pullups') return 'Start with bodyweight'
+      if (exercise.type === 'isolation') return 'Start light (15-25 lbs)'
+      return 'Start conservative'
+    }
+
+    return (
+      <div className="app">
+        <div className="onboarding-screen">
+          <header className="onboarding-header">
+            <h1>Welcome to Hyacinthe!</h1>
+            <p>Let's set your starting weights based on NSCA guidelines</p>
+            <div className="onboarding-info">
+              <h3>🎯 Key Principles:</h3>
+              <ul>
+                <li><strong>Start Conservative:</strong> Better to start light and progress up</li>
+                <li><strong>Focus on Form:</strong> Perfect technique over heavy weight</li>
+                <li><strong>Trust the Process:</strong> Progressive overload will increase your weights automatically</li>
+              </ul>
+            </div>
+          </header>
+
+          <main className="onboarding-main">
+            <div className="weight-setup">
+              <h2>Set Your Starting Weights</h2>
+              <p className="setup-subtitle">Enter comfortable weights where you can complete 8-12 reps with 2-3 reps in reserve</p>
+              
+              <div className="exercise-weights">
+                {allExercises.map(exercise => (
+                  <div key={exercise.id} className="exercise-weight-input">
+                    <div className="exercise-info">
+                      <h3>{exercise.name}</h3>
+                      <span className={`exercise-type ${exercise.type}`}>
+                        {exercise.type === 'compound' ? '🏋️ Compound' : '💪 Isolation'}
+                      </span>
+                      <p className="suggested-weight">{getSuggestedWeight(exercise)}</p>
+                    </div>
+                    <div className="weight-input-group">
+                      <input
+                        type="number"
+                        step="2.5"
+                        min="0"
+                        placeholder={getDefaultWeight(exercise.id)}
+                        value={weights[exercise.id] || ''}
+                        onChange={(e) => handleWeightChange(exercise.id, e.target.value)}
+                        className="weight-input"
+                      />
+                      <span className="weight-unit">lbs</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="onboarding-actions">
+                <button 
+                  className="complete-setup-btn"
+                  onClick={handleSubmit}
+                >
+                  Complete Setup & Start Training
+                </button>
+                <p className="setup-note">
+                  💡 Don't worry about getting these perfect - you can always reset and start over
+                </p>
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+    )
+  }
+
+  // Show onboarding if not completed
+  if (showOnboarding) {
+    return <OnboardingScreen />
+  }
 
   // Workout selection screen
   if (!workoutActive) {

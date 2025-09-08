@@ -90,20 +90,59 @@
 
 ---
 
+## Initial Weight Assessment
+
+### **NSCA-Based Starting Weight Guidelines**
+
+**⚠️ Important**: The NSCA strongly recommends **AGAINST** 1RM testing for beginners due to injury risk and excessive muscle soreness.
+
+### **Safe Assessment Methods**
+
+**Recommended Approach**: Start with conservative weights that allow 8-12 clean reps with 2-3 reps in reserve.
+
+### **Bodyweight-Based Starting Points** (for reference only):
+- **Bench Press**: 0.5-0.75x bodyweight
+- **Squat**: 0.75-1.0x bodyweight  
+- **Deadlift**: 1.0-1.25x bodyweight
+- **Overhead Press**: 0.4-0.6x bodyweight
+
+### **Exercise-Specific Starting Recommendations**:
+- **Compound movements**: Start 20-30% lighter than you think you can handle
+- **Isolation movements**: Begin with 15-25 lbs and adjust based on feel
+- **Bodyweight exercises**: Start unassisted; add weight only after mastering form
+
+### **Hyacinthe App Onboarding**
+The app includes an initial weight setup screen where you can:
+- Input your comfortable starting weights for each exercise
+- View suggested ranges based on exercise type
+- Get NSCA-based recommendations for conservative starting points
+- Reset and restart if needed
+
+**Key Principle**: Better to start too light and progress quickly than start too heavy and compromise form or risk injury.
+
+---
+
 ## Progressive Overload Guidelines
 
+### **NSCA "2 for 2 Rule"** (Primary Method)
+If you can perform 2 or more reps **at or above** the target range for 2 consecutive workouts, increase the weight.
+
+### **Percentage-Based Weight Increases**:
+- **Compound movements**: 2.5-5% increase (typically 2.5-10 lbs)
+- **Isolation movements**: 5-10% increase (typically 2.5-5 lbs)
+- **Minimum increment**: 2.5 lbs (rounded to nearest 2.5 lb increment)
+
 ### **Rep Range Progression**
-- **6-8 reps**: Focus on strength - increase weight when you can complete all sets at top of range
-- **8-12 reps**: Hypertrophy sweet spot - increase weight when completing 12 reps on all sets
-- **12-20 reps**: Metabolic stress and endurance - focus on muscle fatigue and mind-muscle connection
+- **6-8 reps**: Focus on strength - increase weight when hitting 8+ reps consistently
+- **8-12 reps**: Hypertrophy sweet spot - increase weight when hitting 12+ reps consistently  
+- **12-20 reps**: Metabolic stress - increase weight when hitting 20+ reps consistently
 
-### **Weight Progression**
-- **Compound movements** (Bench, Squat, Deadlift, OHP, Rows): +5-10 lbs when target reps achieved
-- **Isolation movements** (Laterals, Curls, Calf Raises): +2.5-5 lbs when target reps achieved
-- **Bodyweight movements** (Dips, Pull-ups): Add weight or increase reps
-
-### **"2 for 2 Rule"**
-If you can perform 2 or more additional reps beyond the target range for 2 consecutive workouts, increase the weight by the smallest increment available.
+### **Automatic Progressive Overload**
+The Hyacinthe app automatically:
+- Calculates new weights based on your previous performance
+- Uses NSCA percentage-based increases instead of fixed increments
+- Adjusts within-workout if you exceed target reps
+- Tracks progression over time for optimal results
 
 ## Rest Periods
 - **Compound exercises**: 2-2.5 minutes (strength and recovery focus)
