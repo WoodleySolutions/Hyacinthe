@@ -62,6 +62,7 @@ function App() {
   const [showResetModal, setShowResetModal] = useState(false)
   const [showOnboarding, setShowOnboarding] = useState(false)
   const [initialWeights, setInitialWeights] = useState({})
+  const [workoutComplete, setWorkoutComplete] = useState(false)
 
   // Check if user has completed onboarding
   useEffect(() => {
@@ -280,12 +281,7 @@ function App() {
     setWorkoutData(initialData)
   }
 
-  const endWorkout = () => {
-    setWorkoutActive(false)
-    setSelectedWorkout(null)
-    setRestActive(false)
-    setRestTimer(0)
-    releaseWakeLock()
+  const completeWorkout = () => {
     // Save workout to localStorage
     const savedWorkouts = JSON.parse(localStorage.getItem('workoutHistory') || '[]')
     savedWorkouts.push({
@@ -294,6 +290,24 @@ function App() {
       exercises: workoutData
     })
     localStorage.setItem('workoutHistory', JSON.stringify(savedWorkouts))
+    
+    // Reset all workout states
+    setWorkoutActive(false)
+    setSelectedWorkout(null)
+    setRestActive(false)
+    setRestTimer(0)
+    setWorkoutComplete(false)
+    releaseWakeLock()
+  }
+
+  const endWorkout = () => {
+    // Early exit without saving - for emergency exit only
+    setWorkoutActive(false)
+    setSelectedWorkout(null)
+    setRestActive(false)
+    setRestTimer(0)
+    setWorkoutComplete(false)
+    releaseWakeLock()
   }
 
   const completeSet = (repsCompleted) => {
@@ -355,8 +369,8 @@ function App() {
       setCurrentExercise(currentExercise + 1)
       setCurrentSet(0)
     } else {
-      // Workout complete
-      endWorkout()
+      // Workout complete - show congratulations screen
+      setWorkoutComplete(true)
     }
   }
 
@@ -576,9 +590,93 @@ function App() {
     )
   }
 
+  // Congratulations Screen Component
+  const CongratulationsScreen = () => {
+    const program = WORKOUT_PROGRAMS[selectedWorkout]
+    const totalSets = program.exercises.reduce((total, exercise) => total + exercise.sets, 0)
+    const completedSets = Object.values(workoutData).reduce((total, exerciseData) => total + exerciseData.sets.length, 0)
+    
+    return (
+      <div className="app">
+        <div className="congratulations-screen">
+          <header className="congrats-header">
+            <div className="success-icon">🎉</div>
+            <h1>Congratulations!</h1>
+            <h2>Workout Complete</h2>
+            <p className="workout-name">{program.name} - {program.description}</p>
+          </header>
+
+          <main className="congrats-main">
+            <div className="workout-summary">
+              <h3>Workout Summary</h3>
+              <div className="summary-stats">
+                <div className="stat-item">
+                  <span className="stat-number">{completedSets}</span>
+                  <span className="stat-label">Total Sets</span>
+                </div>
+                <div className="stat-item">
+                  <span className="stat-number">{program.exercises.length}</span>
+                  <span className="stat-label">Exercises</span>
+                </div>
+                <div className="stat-item">
+                  <span className="stat-number">
+                    {Math.round(program.exercises.reduce((total, ex) => total + (ex.restTime * ex.sets), 0) / 60)}
+                  </span>
+                  <span className="stat-label">Minutes</span>
+                </div>
+              </div>
+
+              <div className="exercise-summary">
+                {program.exercises.map(exercise => {
+                  const exerciseData = workoutData[exercise.id]
+                  const avgWeight = exerciseData.sets.length > 0 
+                    ? Math.round(exerciseData.sets.reduce((sum, set) => sum + set.weight, 0) / exerciseData.sets.length)
+                    : 0
+                  const totalReps = exerciseData.sets.reduce((sum, set) => sum + set.reps, 0)
+                  
+                  return (
+                    <div key={exercise.id} className="exercise-complete">
+                      <span className="exercise-name">{exercise.name}</span>
+                      <span className="exercise-stats">
+                        {exerciseData.sets.length} × {avgWeight > 0 ? `${avgWeight}lbs` : 'BW'} 
+                        {totalReps > 0 && ` (${totalReps} reps)`}
+                      </span>
+                    </div>
+                  )
+                })}
+              </div>
+
+              <div className="congrats-message">
+                <p><strong>Outstanding work!</strong> You've completed another step in your progressive overload journey.</p>
+                <p>Your strength gains and muscle growth are the result of consistent effort like this.</p>
+              </div>
+            </div>
+
+            <div className="congrats-actions">
+              <button 
+                className="complete-workout-btn"
+                onClick={completeWorkout}
+              >
+                Complete Workout
+              </button>
+              <p className="complete-note">
+                This will save your progress and count toward your weekly goals
+              </p>
+            </div>
+          </main>
+        </div>
+      </div>
+    )
+  }
+
   // Show onboarding if not completed
   if (showOnboarding) {
     return <OnboardingScreen />
+  }
+
+  // Show congratulations screen if workout is complete
+  if (workoutComplete) {
+    return <CongratulationsScreen />
   }
 
   // Workout selection screen
@@ -673,7 +771,7 @@ function App() {
             📚
           </button>
           <button className="end-workout-btn" onClick={endWorkout}>
-            End
+            Exit
           </button>
         </div>
       </header>

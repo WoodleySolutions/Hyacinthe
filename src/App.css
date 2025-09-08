@@ -1151,3 +1151,213 @@ body {
   color: var(--blue-primary);
   font-weight: 600;
 }
+
+/* Congratulations Screen Styles */
+.congratulations-screen {
+  padding: 1rem;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.congrats-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.success-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  animation: bounce 1s ease-in-out;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-10px); }
+  60% { transform: translateY(-5px); }
+}
+
+.congrats-header h1 {
+  color: var(--blue-primary);
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+.congrats-header h2 {
+  color: var(--text-primary);
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.workout-name {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.congrats-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.workout-summary {
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid var(--bg-tertiary);
+  margin-bottom: 2rem;
+  flex: 1;
+}
+
+.workout-summary h3 {
+  color: var(--text-primary);
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 1.2rem;
+}
+
+.summary-stats {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.stat-number {
+  color: var(--blue-primary);
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.stat-label {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.exercise-summary {
+  margin-bottom: 2rem;
+}
+
+.exercise-complete {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  background: var(--bg-tertiary);
+  border-radius: 8px;
+}
+
+.exercise-name {
+  color: var(--text-primary);
+  font-weight: 600;
+  flex: 1;
+}
+
+.exercise-stats {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.congrats-message {
+  text-align: center;
+  padding: 1rem;
+  background: var(--bg-primary);
+  border-radius: 8px;
+  border: 1px solid var(--blue-primary);
+}
+
+.congrats-message p {
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.congrats-message p:last-child {
+  margin-bottom: 0;
+}
+
+.congrats-actions {
+  text-align: center;
+}
+
+.complete-workout-btn {
+  background: var(--success);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 1.25rem 2.5rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: var(--touch-target);
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.complete-workout-btn:hover {
+  background: #0d9488;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+}
+
+.complete-workout-btn:active {
+  transform: translateY(0);
+}
+
+.complete-note {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* Mobile Responsive for Congratulations Screen */
+@media (max-width: 480px) {
+  .congrats-header h1 {
+    font-size: 2rem;
+  }
+
+  .congrats-header h2 {
+    font-size: 1.25rem;
+  }
+
+  .success-icon {
+    font-size: 3rem;
+  }
+
+  .summary-stats {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .stat-item {
+    flex-direction: row;
+    gap: 0.5rem;
+  }
+
+  .exercise-complete {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+
+  .complete-workout-btn {
+    width: 100%;
+    padding: 1rem 2rem;
+  }
+}
