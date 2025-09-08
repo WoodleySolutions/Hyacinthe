@@ -61,8 +61,15 @@ body {
 /* Header Styles */
 .header {
   padding: 2rem 1.5rem 1rem;
-  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
   background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+}
+
+.header-content {
+  text-align: center;
+  flex: 1;
 }
 
 .header h1 {
@@ -78,6 +85,164 @@ body {
 .header p {
   color: var(--text-secondary);
   font-size: 1.1rem;
+}
+
+/* Guide Button */
+.guide-btn {
+  background-color: var(--blue-primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 40px;
+}
+
+.guide-btn:hover {
+  background-color: var(--blue-dark);
+}
+
+.guide-btn-small {
+  background-color: var(--blue-primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 40px;
+  min-width: 40px;
+}
+
+.guide-btn-small:hover {
+  background-color: var(--blue-dark);
+}
+
+/* Program Guide Overlay */
+.program-guide-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.program-guide {
+  background-color: var(--bg-primary);
+  border-radius: 12px;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow: hidden;
+  border: 2px solid var(--blue-primary);
+}
+
+.guide-header {
+  background-color: var(--bg-secondary);
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--bg-tertiary);
+}
+
+.guide-header h2 {
+  color: var(--blue-light);
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 2rem;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-btn:hover {
+  color: var(--text-primary);
+}
+
+.guide-content {
+  padding: 1.5rem;
+  overflow-y: auto;
+  max-height: calc(90vh - 100px);
+}
+
+.guide-section {
+  margin-bottom: 2rem;
+}
+
+.guide-section:last-child {
+  margin-bottom: 0;
+}
+
+.guide-section h3 {
+  color: var(--blue-light);
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid var(--blue-primary);
+  padding-bottom: 0.5rem;
+}
+
+.guide-section p {
+  color: var(--text-secondary);
+  margin-bottom: 0.75rem;
+  line-height: 1.6;
+}
+
+.progression-rules {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.rule {
+  background-color: var(--bg-secondary);
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid var(--blue-primary);
+  color: var(--text-secondary);
+}
+
+.substitutions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.substitutions div {
+  background-color: var(--bg-secondary);
+  padding: 1rem;
+  border-radius: 8px;
+  color: var(--text-secondary);
+}
+
+/* Updated workout header for guide button */
+.header-buttons {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
 }
 
 /* Main Content */
@@ -216,6 +381,7 @@ body {
   border-radius: 16px;
   padding: 2rem;
   border: 2px solid var(--blue-primary);
+  position: relative;
 }
 
 .target-weight {
@@ -242,6 +408,43 @@ body {
   color: var(--text-secondary);
   font-size: 1.2rem;
   font-weight: 500;
+}
+
+/* Progression Indicator */
+.progression-indicator {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.progression-indicator.increased {
+  background-color: rgba(16, 185, 129, 0.2);
+  color: var(--success);
+  border: 1px solid var(--success);
+}
+
+.progression-indicator.decreased {
+  background-color: rgba(239, 68, 68, 0.2);
+  color: var(--error);
+  border: 1px solid var(--error);
+}
+
+.progression-indicator.maintained {
+  background-color: rgba(59, 130, 246, 0.2);
+  color: var(--blue-light);
+  border: 1px solid var(--blue-primary);
+}
+
+.last-weight {
+  font-size: 0.9rem;
+  opacity: 0.8;
+  font-weight: 400;
 }
 
 /* Set Completion */
@@ -359,16 +562,165 @@ body {
   }
 }
 
+/* Workout Selection */
+.workout-selection h2 {
+  color: var(--blue-light);
+  font-size: 1.4rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-weight: 600;
+}
+
+.workout-options {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.workout-option {
+  background-color: var(--bg-secondary);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid var(--bg-tertiary);
+}
+
+.workout-info h3 {
+  color: var(--text-primary);
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.workout-info p {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+.exercise-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.exercise-mini {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  padding: 0.25rem 0;
+}
+
+/* Updated Workout Header */
+.workout-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background-color: var(--bg-secondary);
+  border-bottom: 1px solid var(--bg-tertiary);
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.workout-title {
+  color: var(--blue-light);
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+/* Rest Timer */
+.rest-timer {
+  background: linear-gradient(135deg, var(--blue-primary) 0%, var(--blue-dark) 100%);
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: center;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.timer-display {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.timer-label {
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+.timer-value {
+  color: white;
+  font-size: 2.5rem;
+  font-weight: 800;
+  font-family: 'Courier New', monospace;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
+/* Enhanced Rep Buttons */
+.rep-range-buttons p {
+  text-align: center;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+.rep-btn.in-range {
+  background-color: var(--success);
+  border-color: #10b981;
+  color: white;
+}
+
+.rep-btn.in-range:hover {
+  background-color: #059669;
+  border-color: #10b981;
+}
+
+.rep-btn.above-range {
+  background-color: var(--blue-primary);
+  border-color: var(--blue-light);
+  color: white;
+}
+
+.rep-btn.above-range:hover {
+  background-color: var(--blue-dark);
+  border-color: var(--blue-light);
+}
+
 /* Touch Improvements */
 @media (hover: none) and (pointer: coarse) {
   .start-workout-btn:hover,
   .success-btn:hover,
-  .rep-btn:hover {
+  .rep-btn:hover,
+  .rep-btn.in-range:hover,
+  .rep-btn.above-range:hover {
     transform: none;
   }
   
   .start-workout-btn:active,
   .success-btn:active {
     background-opacity: 0.8;
+  }
+}
+
+/* Mobile Responsive Updates */
+@media (max-width: 480px) {
+  .workout-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  
+  .timer-value {
+    font-size: 2rem;
+  }
+  
+  .workout-option {
+    padding: 1rem;
   }
 }
