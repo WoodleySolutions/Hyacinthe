@@ -81,9 +81,19 @@ function App() {
         const wakeLockObj = await navigator.wakeLock.request('screen')
         setWakeLock(wakeLockObj)
         console.log('Screen wake lock activated')
+        
+        // Handle wake lock release events (when user switches tabs, etc.)
+        wakeLockObj.addEventListener('release', () => {
+          console.log('Screen wake lock was released')
+          setWakeLock(null)
+        })
       } catch (err) {
         console.error('Failed to request wake lock:', err)
+        // Fallback: try to prevent sleep with visibility change detection
+        console.log('Attempting fallback wake lock strategy')
       }
+    } else {
+      console.log('Wake Lock API not supported, using fallback strategies')
     }
   }
 
@@ -95,6 +105,21 @@ function App() {
       console.log('Screen wake lock released')
     }
   }
+
+  // Re-acquire wake lock when page becomes visible again (handles tab switching)
+  useEffect(() => {
+    const handleVisibilityChange = async () => {
+      if (workoutActive && document.visibilityState === 'visible' && !wakeLock) {
+        console.log('Page became visible during workout, re-acquiring wake lock')
+        await requestWakeLock()
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }
+  }, [workoutActive, wakeLock])
 
   // Rest timer functionality
   useEffect(() => {
@@ -172,7 +197,6 @@ function App() {
     
     // Check if user exceeded target range on majority of sets
     const setsAboveTarget = lastExerciseData.sets.filter(set => set.reps > targetMax).length
-    const setsInTarget = lastExerciseData.sets.filter(set => set.reps >= targetMin && set.reps <= targetMax).length
     const totalSets = lastExerciseData.sets.length
     
     // NSCA "2 for 2 rule" - if hitting top of range consistently, increase weight
@@ -183,7 +207,7 @@ function App() {
       const isCompound = exercise.type === 'compound'
       const percentage = isCompound ? 0.05 : 0.1  // Use higher end for session-to-session
       const rawIncrease = lastWeight * percentage
-      const increment = Math.max(2.5, Math.round(rawIncrease / 2.5) * 2.5)  // Round to nearest 2.5, min 2.5
+      const increment = Math.max(5, Math.round(rawIncrease / 5) * 5)  // Round to nearest 5, min 5
       
       return lastWeight + increment
     }
@@ -194,7 +218,7 @@ function App() {
       const isCompound = exercise.type === 'compound'
       const percentage = isCompound ? 0.025 : 0.05  // Conservative decrease
       const rawDecrease = lastWeight * percentage
-      const decrement = Math.max(2.5, Math.round(rawDecrease / 2.5) * 2.5)  // Round to nearest 2.5, min 2.5
+      const decrement = Math.max(5, Math.round(rawDecrease / 5) * 5)  // Round to nearest 5, min 5
       
       return Math.max(lastWeight - decrement, 25) // Don't go below 25 lbs
     }
@@ -224,7 +248,6 @@ function App() {
     const workoutsThisWeek = totalWorkouts % 4
     
     // Determine next recommended workout (priority: Upper1, Lower1, Upper2, Lower2)
-    const counts = { upper1: upper1Count, lower1: lower1Count, upper2: upper2Count, lower2: lower2Count }
     const minCount = Math.min(upper1Count, lower1Count, upper2Count, lower2Count)
     let nextWorkout = null
     
@@ -310,6 +333,55 @@ function App() {
     releaseWakeLock()
   }
 
+  const adjustWeight = (adjustment) => {
+    const program = WORKOUT_PROGRAMS[selectedWorkout]
+    const exercise = program.exercises[currentExercise]
+    const updatedData = { ...workoutData }
+    const newWeight = Math.max(5, updatedData[exercise.id].targetWeight + adjustment)
+    
+    updatedData[exercise.id].targetWeight = newWeight
+    updatedData[exercise.id].manuallyAdjusted = true
+    
+    setWorkoutData(updatedData)
+  }
+
+  const goBack = () => {
+    const program = WORKOUT_PROGRAMS[selectedWorkout]
+    
+    if (currentSet > 0) {
+      // Go back to previous set of current exercise
+      setCurrentSet(currentSet - 1)
+      
+      // Remove the last completed set from data
+      const updatedData = { ...workoutData }
+      const exercise = program.exercises[currentExercise]
+      if (updatedData[exercise.id].sets.length > 0) {
+        updatedData[exercise.id].sets.pop()
+        setWorkoutData(updatedData)
+      }
+    } else if (currentExercise > 0) {
+      // Go back to previous exercise
+      setCurrentExercise(currentExercise - 1)
+      const previousExercise = program.exercises[currentExercise - 1]
+      setCurrentSet(previousExercise.sets - 1) // Go to last set of previous exercise
+      
+      // Remove the last completed set from previous exercise data  
+      const updatedData = { ...workoutData }
+      if (updatedData[previousExercise.id].sets.length > 0) {
+        updatedData[previousExercise.id].sets.pop()
+        setWorkoutData(updatedData)
+      }
+    }
+    
+    // Stop any active rest timer when going back
+    setRestActive(false)
+    setRestTimer(0)
+  }
+
+  const canGoBack = () => {
+    return currentSet > 0 || currentExercise > 0
+  }
+
   const completeSet = (repsCompleted) => {
     const program = WORKOUT_PROGRAMS[selectedWorkout]
     const exercise = program.exercises[currentExercise]
@@ -330,15 +402,22 @@ function App() {
       const currentWeight = updatedData[exercise.id].targetWeight
       
       // NSCA percentages: 2.5-5% compounds, 5-10% isolation
-      const percentage = isCompound ? 0.025 : 0.05  // Use lower end for within-workout
+      let percentage = isCompound ? 0.025 : 0.05  // Use lower end for within-workout
+      
+      // Double the increase if reps are above target range (weight too light)
+      if (repsCompleted > targetMax) {
+        percentage = percentage * 2
+      }
+      
       const rawIncrease = currentWeight * percentage
-      const increment = Math.max(2.5, Math.round(rawIncrease / 2.5) * 2.5)  // Round to nearest 2.5, min 2.5
+      const increment = Math.max(5, Math.round(rawIncrease / 5) * 5)  // Round to nearest 5, min 5
       
       updatedData[exercise.id].targetWeight += increment
       
       // Track that weight was increased for this exercise
       updatedData[exercise.id].weightIncreased = true
       updatedData[exercise.id].lastIncrement = increment
+      updatedData[exercise.id].doubleIncrease = repsCompleted > targetMax
     }
     // Decrease weight if reps were significantly below target (failed badly)
     else if (repsCompleted < targetMin && currentSet + 1 < exercise.sets) {
@@ -348,7 +427,7 @@ function App() {
       // NSCA percentages: 2.5-5% compounds, 5-10% isolation  
       const percentage = isCompound ? 0.025 : 0.05  // Conservative decrease
       const rawDecrease = currentWeight * percentage
-      const decrement = Math.max(2.5, Math.round(rawDecrease / 2.5) * 2.5)  // Round to nearest 2.5, min 2.5
+      const decrement = Math.max(5, Math.round(rawDecrease / 5) * 5)  // Round to nearest 5, min 5
       
       updatedData[exercise.id].targetWeight = Math.max(updatedData[exercise.id].targetWeight - decrement, 25)
       
@@ -423,9 +502,9 @@ function App() {
 
           <section className="guide-section">
             <h3>Weight Progression (Percentage-Based)</h3>
-            <p><strong>Compound movements:</strong> 2.5-5% increase (min 2.5 lbs)</p>
-            <p><strong>Isolation movements:</strong> 5-10% increase (min 2.5 lbs)</p>
-            <p><strong>Smart Rounding:</strong> All increases rounded to nearest 2.5 lb increment</p>
+            <p><strong>Compound movements:</strong> 2.5-5% increase (min 5 lbs)</p>
+            <p><strong>Isolation movements:</strong> 5-10% increase (min 5 lbs)</p>
+            <p><strong>Smart Rounding:</strong> All increases rounded to nearest 5 lb increment</p>
             <p><strong>Automatic Tracking:</strong> App handles all calculations for you</p>
           </section>
 
@@ -487,7 +566,6 @@ function App() {
   // Onboarding component
   const OnboardingScreen = () => {
     const [weights, setWeights] = useState({})
-    const [currentStep, setCurrentStep] = useState(0)
 
     // Get all unique exercises from all workout programs
     const allExercises = []
@@ -559,7 +637,7 @@ function App() {
                     <div className="weight-input-group">
                       <input
                         type="number"
-                        step="2.5"
+                        step="5"
                         min="0"
                         placeholder={getDefaultWeight(exercise.id)}
                         value={weights[exercise.id] || ''}
@@ -593,7 +671,6 @@ function App() {
   // Congratulations Screen Component
   const CongratulationsScreen = () => {
     const program = WORKOUT_PROGRAMS[selectedWorkout]
-    const totalSets = program.exercises.reduce((total, exercise) => total + exercise.sets, 0)
     const completedSets = Object.values(workoutData).reduce((total, exerciseData) => total + exerciseData.sets.length, 0)
     
     return (
@@ -721,7 +798,7 @@ function App() {
                       </h3>
                       <p>{program.description}</p>
                       <div className="exercise-preview">
-                      {program.exercises.map((exercise, index) => (
+                      {program.exercises.map((exercise) => (
                         <span key={exercise.id} className="exercise-mini">
                           {exercise.name} {exercise.sets}×{exercise.targetReps[0]}-{exercise.targetReps[1]}
                         </span>
@@ -767,6 +844,14 @@ function App() {
           Exercise {currentExercise + 1} of {program.exercises.length}
         </div>
         <div className="header-buttons">
+          <button 
+            className="back-btn" 
+            onClick={goBack}
+            disabled={!canGoBack()}
+            title={canGoBack() ? 'Go back to previous set/exercise' : 'Cannot go back further'}
+          >
+            ⬅️
+          </button>
           <button className="guide-btn-small" onClick={() => setShowGuide(true)}>
             📚
           </button>
@@ -786,8 +871,25 @@ function App() {
         
         <div className="weight-display">
           <div className="target-weight">
-            <span className="weight-value">{currentWeight}</span>
-            <span className="weight-unit">lbs</span>
+            <div className="weight-adjustment">
+              <button 
+                className="weight-adjust-btn decrease" 
+                onClick={() => adjustWeight(-5)}
+                disabled={currentWeight <= 5}
+              >
+                −5
+              </button>
+              <div className="weight-value-container">
+                <span className="weight-value">{currentWeight}</span>
+                <span className="weight-unit">lbs</span>
+              </div>
+              <button 
+                className="weight-adjust-btn increase" 
+                onClick={() => adjustWeight(5)}
+              >
+                +5
+              </button>
+            </div>
           </div>
           <div className="target-reps">
             Target: {targetMin}-{targetMax} reps
@@ -808,7 +910,10 @@ function App() {
           {/* Within-workout weight changes */}
           {currentSet > 0 && workoutData[exercise.id]?.weightIncreased && (
             <div className="weight-change-notification increased">
-              🚀 Weight increased +{workoutData[exercise.id].lastIncrement} lbs for next set!
+              {workoutData[exercise.id].doubleIncrease ? 
+                `🔥 Double increase +${workoutData[exercise.id].lastIncrement} lbs! (Weight too light)` :
+                `🚀 Weight increased +${workoutData[exercise.id].lastIncrement} lbs for next set!`
+              }
             </div>
           )}
           {currentSet > 0 && workoutData[exercise.id]?.weightDecreased && (
@@ -833,7 +938,7 @@ function App() {
             <div className="rep-range-buttons">
               <p>Select reps completed:</p>
               <div className="rep-buttons">
-                {Array.from({ length: targetMax }, (_, i) => {
+                {Array.from({ length: targetMax + 4 }, (_, i) => {
                   const repCount = i + 1
                   const isInRange = repCount >= targetMin && repCount <= targetMax
                   const isAboveRange = repCount > targetMax

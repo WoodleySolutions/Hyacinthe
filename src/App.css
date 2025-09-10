@@ -461,6 +461,30 @@ body {
   font-weight: 600;
 }
 
+.back-btn {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--silver-dark);
+  border-radius: 6px;
+  padding: 0.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 40px;
+  min-width: 40px;
+}
+
+.back-btn:hover:not(:disabled) {
+  background-color: var(--blue-primary);
+  border-color: var(--blue-light);
+  color: white;
+}
+
+.back-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .end-workout-btn {
   background-color: var(--error);
   color: white;
@@ -509,10 +533,67 @@ body {
 
 .target-weight {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: center;
-  gap: 0.5rem;
   margin-bottom: 1rem;
+}
+
+.weight-adjustment {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.weight-adjust-btn {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 2px solid var(--silver-dark);
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 50px;
+  min-height: 40px;
+}
+
+.weight-adjust-btn:hover:not(:disabled) {
+  background-color: var(--blue-primary);
+  border-color: var(--blue-light);
+  color: white;
+}
+
+.weight-adjust-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.weight-adjust-btn.decrease {
+  color: var(--error);
+  border-color: var(--error);
+}
+
+.weight-adjust-btn.decrease:hover:not(:disabled) {
+  background-color: var(--error);
+  color: white;
+}
+
+.weight-adjust-btn.increase {
+  color: var(--success);
+  border-color: var(--success);
+}
+
+.weight-adjust-btn.increase:hover:not(:disabled) {
+  background-color: var(--success);
+  color: white;
+}
+
+.weight-value-container {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
 }
 
 .weight-value {
